@@ -79,14 +79,41 @@
     //
     // test if a specific row on this board contains a conflict
     hasRowConflictAt: function(rowIndex) {
-      return false; // fixme
+      var nums = this.rows()[rowIndex];
+      var sum = 0;
+      nums.forEach(function(num) {
+        sum += num;
+      })
+      if (sum === 0) {
+        return false;
+      }
+      return true;
     },
 
     // test if any rows on this board contain conflicts
     hasAnyRowConflicts: function() {
-      return false; // fixme
+      // for each row on board check for conflicts
+      var matrix = this.rows();
+      var answer = false;
+      for (var i = 0; i < matrix.length; i++) {
+        var sums = [];
+        matrix[i].forEach(function(num) {
+          var sum = 0;
+          sum += num;
+          sums.push(sum);
+        })
+        sums.forEach(function(num) {
+          if (num !== 0) {
+            answer = true;
+          }
+        })
+      }
+      return answer; // fixme
     },
 
+    // console.log(this.rows()); returns board
+    // console.log(this.rows()[0]); returns single row
+    // console.log(this.rows()[0][0]); returns single value
 
 
     // COLUMNS - run from top to bottom
@@ -94,12 +121,52 @@
     //
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex) {
-      return false; // fixme
+      // no columns available so need to create them with row indices
+      // could just iterate through each rows[0-n][colIndex]
+      var rows = this.rows();
+      var columns = [];
+      for (var i = 0; i < rows.length; i++) {
+        columns.push(rows[i][colIndex]);
+      }
+
+      var sum = 0;
+      columns.forEach(function(num) {
+        sum += num;
+      })
+      if (sum !== 0) {
+        return true;
+      }
+      return false;
     },
 
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function() {
-      return false; // fixme
+      // iterate through each row and each column
+      // create columns matrix? push row[0][0] then [1][0]
+      var rows = this.rows();
+      var columns = [];
+      var col = 0;
+      var column = [];
+      for (var i = 0; i < rows.length; i++) {
+        column.push(rows[i][col]);
+        columns.push(column);
+        col++;
+      }
+      var sums = [];
+      columns.forEach(function(item) {
+        var sum = 0;
+        for (var i = 0; i < item.length; i++) {
+          sum += item[i];
+        }
+        sums.push(sum);
+      })
+      var answer = false
+      sums.forEach(function(num) {
+        if (num !== 0) {
+          answer = true;
+        }
+      })
+      return answer;
     },
 
 
