@@ -81,34 +81,25 @@
     hasRowConflictAt: function(rowIndex) {
       var nums = this.rows()[rowIndex];
       var sum = 0;
-      nums.forEach(function(num) {
-        sum += num;
-      })
-      if (sum === 0) {
-        return false;
+      nums.forEach(num => {sum += num})
+
+      if (sum > 1) {
+        return true;
       }
-      return true;
+      return false;
     },
 
     // test if any rows on this board contain conflicts
     hasAnyRowConflicts: function() {
       // for each row on board check for conflicts
-      var matrix = this.rows();
-      var answer = false;
-      for (var i = 0; i < matrix.length; i++) {
-        var sums = [];
-        matrix[i].forEach(function(num) {
-          var sum = 0;
-          sum += num;
-          sums.push(sum);
-        })
-        sums.forEach(function(num) {
-          if (num !== 0) {
-            answer = true;
-          }
-        })
+      var result = false;
+      for (var i = 0; i < this.attributes.n; i++) {
+        result = this.hasRowConflictAt(i);
+        if (result) {
+          break;
+        }
       }
-      return answer; // fixme
+      return result;
     },
 
     // console.log(this.rows()); returns board
@@ -133,7 +124,7 @@
       columns.forEach(function(num) {
         sum += num;
       })
-      if (sum !== 0) {
+      if (sum > 1) {
         return true;
       }
       return false;
@@ -141,33 +132,41 @@
 
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function() {
-      // iterate through each row and each column
-      // create columns matrix? push row[0][0] then [1][0]
-      var rows = this.rows();
-      var columns = [];
-      var col = 0;
-      var column = [];
-      for (var i = 0; i < rows.length; i++) {
-        column.push(rows[i][col]);
-        columns.push(column);
-        col++;
+      // use attributes.n to represent number of rows
+      var result = false;
+      for (var i = 0; i < this.attributes.n; i++) {
+        result = this.hasColConflictAt(i);
+        if (result) {
+          break;
+        }
       }
-      var sums = [];
-      columns.forEach(function(item) {
-        var sum = 0;
-        for (var i = 0; i < item.length; i++) {
-          sum += item[i];
-        }
-        sums.push(sum);
-      })
-      var answer = false
-      sums.forEach(function(num) {
-        if (num !== 0) {
-          answer = true;
-        }
-      })
-      return answer;
+      return result;
     },
+
+      // var rows = this.rows();
+      // var columns = [];
+      // var col = 0;
+      // var column = [];
+      // for (var i = 0; i < rows.length; i++) {
+      //   column.push(rows[i][col]);
+      //   columns.push(column);
+      //   col++;
+      // }
+      // var sums = [];
+      // columns.forEach(function(item) {
+      //   var sum = 0;
+      //   for (var i = 0; i < item.length; i++) {
+      //     sum += item[i];
+      //   }
+      //   sums.push(sum);
+      // })
+      // var answer = false
+      // sums.forEach(function(num) {
+      //   if (num !== 0) {
+      //     answer = true;
+      //   }
+      // })
+      // return answer;
 
 
 
@@ -176,12 +175,46 @@
     //
     // test if a specific major diagonal on this board contains a conflict
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+      // go through matrix to find the queens, if queens have same index = conflict
+      // calculate the sum of diagonal, if > 1 (how to account for negative param values)
+
+      // iterate through each row -> if the value in the index is 1
+      // keep track of value = 1
+      // compare locations of queens (1)
+      //_getFirstRowColumnIndexForMajorDiagonalOn(rowIndex, colIndex)
+      var result = false;
+      var rows = this.rows();
+      var queens = 0;
+      for (var i = 0; i < rows.length; i++) {
+        // single row
+        row = rows[i];
+        for (var j = 0; j < row.length; j++) {
+          // single num
+          if (row[j] > 0) {
+            var queenIndex = this._getFirstRowColumnIndexForMajorDiagonalOn(i, j);
+            if (majorDiagonalColumnIndexAtFirstRow === queenIndex) {
+              queens += 1;
+              if (queens > 1) {
+                result = true;
+                break;
+              }
+            }
+          }
+        }
+      }
+      return result; // fixme
     },
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
-      return false; // fixme
+      var result = false;
+      for (var i = -3; i < this.attributes.n; i++) {
+        result = this.hasMajorDiagonalConflictAt(i);
+        if (result) {
+          break;
+        }
+      }
+      return result;
     },
 
 
@@ -191,12 +224,40 @@
     //
     // test if a specific minor diagonal on this board contains a conflict
     hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+      var result = false;
+      var rows = this.rows();
+      var queens = 0;
+      for (var i = 0; i < rows.length; i++) {
+        // single row
+        row = rows[i];
+        for (var j = 0; j < row.length; j++) {
+          // single num
+          if (row[j] > 0) {
+            var queenIndex = this._getFirstRowColumnIndexForMinorDiagonalOn(i, j);
+            if (minorDiagonalColumnIndexAtFirstRow === queenIndex) {
+              queens += 1;
+              if (queens > 1) {
+                result = true;
+                break;
+              }
+            }
+          }
+        }
+      }
+      return result; // fixme
     },
 
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function() {
-      return false; // fixme
+      var result = false;
+      // calculated length for when n is different
+      for (var i = 0; i < ((2 * this.attributes.n) - 2); i++) {
+        result = this.hasMinorDiagonalConflictAt(i);
+        if (result) {
+          break;
+        }
+      }
+      return result;
     }
 
     /*--------------------  End of Helper Functions  ---------------------*/
